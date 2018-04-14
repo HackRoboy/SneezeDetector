@@ -14,22 +14,22 @@ import dtw
 class hwDetector:
     """
 
-	This class contains methods which accomplish the end goal of hotword detection using methods defined in mfcc,dtw and wordrecorder classes.
+    This class contains methods which accomplish the end goal of hotword detection using methods defined in mfcc,dtw and wordrecorder classes.
 
-	:param samplingFrequency: Sampling frequency of audio
-	:type samplingFrequency: int
-	:param framePeriod: Duration of 1 frame in seconds
-	:type framePeriod: float
-	:param hopPeriod: Frame hopping duration in seconds
-	:type hopPeriod: float
-	:param trainDir: Path to directory containing training utterances
-	:type trainDir: str
-	:param thresh: Threshold used for DTW distance 
-	:type thresh: float
+    :param samplingFrequency: Sampling frequency of audio
+    :type samplingFrequency: int
+    :param framePeriod: Duration of 1 frame in seconds
+    :type framePeriod: float
+    :param hopPeriod: Frame hopping duration in seconds
+    :type hopPeriod: float
+    :param trainDir: Path to directory containing training utterances
+    :type trainDir: str
+    :param thresh: Threshold used for DTW distance
+    :type thresh: float
 
-	Documentation related to all methods in this class is described below.
+    Documentation related to all methods in this class is described below.
 
-	"""
+    """
 
     def __init__(self, samplingFrequency=8000, framePeriod=25e-3, hopPeriod=10e-3, trainDir="./train_audio/",
                  thresh=1.2):
@@ -59,22 +59,26 @@ class hwDetector:
 
     def distance(self, fileName):
         """
-	
-		This function is used for calculating the DTW distance between the test utterance and each of the 10 training utterances.
 
-		:param fileName: Name of test utterance .wav file
-		:type fileName: str
-		:returns: List of DTW distances of test utterance with each training utterance
-		:rtype: list
+        This function is used for calculating the DTW distance between the test utterance and each of the 10 training utterances.
 
-		"""
+        :param fileName: Name of test utterance .wav file
+        :type fileName: str
+        :returns: List of DTW distances of test utterance with each training utterance
+        :rtype: list
+
+        """
+        if isinstance(fileName, (bytes, bytearray)):
+            data = np.fromstring(fileName)
+        else:
+            (fs, data) = wv.read(fileName)
+
         DTW_calculator = dtw.DTW()
-        (fs, data) = wv.read(fileName)
         num_frames = int(data.shape[0] / self.hopLength) - int(np.ceil(self.frameLength / self.hopLength))
         if num_frames <= 0:
             return 10000
 
-        MFCC_calculator = mfcc.MFCC(s)
+        MFCC_calculator = mfcc.MFCC()
         MFCC_MATRIX = abs(np.empty([39, num_frames]))
         for k in range(num_frames):
             MFCC_MATRIX[:, k] = MFCC_calculator.compute_mfcc(
@@ -86,15 +90,15 @@ class hwDetector:
 
     def isHotword(self, fileName):
         """
-		
-		This function computes the mean of the calculated DTW distances and returns a True value if mean distance is less than a specified threshold. If mean distance is greater than threshold it returns False indicating absence of hotword.
 
-		:param fileName: Name of test utterance .wav file
+        This function computes the mean of the calculated DTW distances and returns a True value if mean distance is less than a specified threshold. If mean distance is greater than threshold it returns False indicating absence of hotword.
+
+        :param fileName: Name of test utterance .wav file
                 :type fileName: str
                 :returns: True/False to indicate presence/absence of hotword
                 :rtype: Boolean
 
-		"""
+        """
         distances = np.array(self.distance(fileName))
         mean_dist = np.mean(distances)
         if (mean_dist < self.thresh):
