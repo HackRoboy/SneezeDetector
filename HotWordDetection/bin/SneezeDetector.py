@@ -64,7 +64,7 @@ while not leave:
                 # Enough speech detected to trigger
 		### now we can try to find if it is about sneezing or not: ring_buffer
 		##added by hajer
-		#print(hwDet.isHotword(ring_buffer))
+		print(hwDet.isHotword(ring_buffer))
 		##added by hajer
                 sys.stdout.write('+')
                 triggered = True
