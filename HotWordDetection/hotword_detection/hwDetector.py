@@ -43,7 +43,7 @@ class hwDetector:
 				num_frames = int(data.shape[0]/self.hopLength) - int(np.ceil(self.frameLength/self.hopLength))
 
 				MFCC_calculator = mfcc.MFCC()
-				MFCC_MATRIX = np.empty([39, num_frames])
+				MFCC_MATRIX = np.empty([39, abs(num_frames)])
 				for k in range(num_frames):
 					MFCC_MATRIX[:,k] = MFCC_calculator.compute_mfcc(data[k*self.hopLength : k*self.hopLength + self.frameLength])
 				self.referenceMFCC.append(MFCC_MATRIX)
@@ -69,8 +69,8 @@ class hwDetector:
 		if num_frames<=0:
 			return 10000
 
-		MFCC_calculator = mfcc.MFCC()
-		MFCC_MATRIX = np.empty([39, num_frames])
+		MFCC_calculator = mfcc.MFCC(s)
+		MFCC_MATRIX = abs(np.empty([39, num_frames]))
 		for k in range(num_frames):
 			MFCC_MATRIX[:,k] = MFCC_calculator.compute_mfcc(data[k*self.hopLength : k*self.hopLength + self.frameLength])
 
