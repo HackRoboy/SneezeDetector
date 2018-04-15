@@ -2,11 +2,13 @@ import collections
 
 import sys
 import os
+import numpy as np
 import pyaudio as pyaudio
 import librosa
 
 DEVICE_INDEX = 0
-FORMAT = pyaudio.paInt16
+FORMAT = pyaudio.paFloat32
+NPFORMAT = np.float32
 CHANNELS = 1
 RATE = 16000
 CHUNK_DURATION_MS = 30  # supports 10, 20 and 30 (ms)
@@ -49,21 +51,18 @@ if __name__ == '__main__':
         ring_buffer_chunknum += 1
         ring_buffer.append(chunk)
 
-        print('#')
+        print('#', end='', flush=True)
 
         # ring buffer is full
-        # if ring_buffer_chunknum == NUM_PADDING_CHUNKS:
-        #     sys.stdout.write('-')
-        #     sys.stdout.write('\n')
-        #     # moving the full ring buffer to data (?)
-        #     data = b''.join(ring_buffer)
-        #     ### now we can try to find if it is about sneezing or not: ring_buffer (hajer part)
-        #     print(
-        #         hwDet.isHotword(
-        #             data))  ### totally not sure how it works, but it doesnt accept current string - natalia
-        #     ###
-        #     ring_buffer.clear()
-        #     ring_buffer_chunknum = 0
+        if ring_buffer_chunknum == NUM_PADDING_CHUNKS:
+            print()
+            # moving the full ring buffer to data (?)
+            data = np.fromstring(b''.join(ring_buffer), dtype=NPFORMAT)
+
+            mfccs = librosa.feature.mfcc(data, RATE)
+
+            ring_buffer.clear()
+            ring_buffer_chunknum = 0
 
     stream.stop_stream()
     print("* done recording")
