@@ -5,8 +5,10 @@ import collections
 import sys
 import os
 import numpy as np
+from scipy.spatial.distance import euclidean
 import pyaudio as pyaudio
 import librosa
+from fastdtw import fastdtw
 
 from trainHotword import get_training_mfccs
 import detectHotword
@@ -29,7 +31,7 @@ def get_mic_stream():
                      rate=RATE,
                      input=True,
                      start=False,
-                     input_device_index=DEVICE_INDEX,
+                     #input_device_index=DEVICE_INDEX,
                      frames_per_buffer=CHUNK_SIZE)
     print('Streaming from Mic:')
     print(pa.get_device_info_by_index(DEVICE_INDEX))
@@ -63,7 +65,7 @@ if __name__ == '__main__':
         ring_buffer_chunknum += 1
         ring_buffer.append(chunk)
 
-        print('#', end='', flush=True)
+       # print('#', end='', flush=True)
 
         # ring buffer is full
         if ring_buffer_chunknum == NUM_PADDING_CHUNKS:
@@ -74,6 +76,11 @@ if __name__ == '__main__':
             mfcc = librosa.feature.mfcc(data, RATE)
             if detectHotword.get_avg_distance(mfcc, hotwordData) < threshold:
                 print('HOTWORD!')
+
+	    ### fastdtw - natalia
+            mfccs = librosa.feature.mfcc(data, RATE)
+	    distance, path = fastdtw(hotwordData, mfccs, dist=euclidean)
+	    print(distance)
 
             ring_buffer.clear()
             ring_buffer_chunknum = 0
