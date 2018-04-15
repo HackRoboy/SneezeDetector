@@ -10,6 +10,7 @@ import librosa
 
 from trainHotword import get_training_mfccs
 import detectHotword
+from play_bless import play_bless
 
 DEVICE_INDEX = 0
 FORMAT = pyaudio.paFloat32
@@ -47,6 +48,8 @@ if __name__ == '__main__':
 
     print('Threshold: %f' % threshold)
 
+    play_bless()
+
 
     stream = get_mic_stream()
 
@@ -78,6 +81,7 @@ if __name__ == '__main__':
             print('D: %f ' % dist, end='')
             if dist < threshold:
                 print('HOTWORD!')
+                play_bless()
             else:
                 print('Nothing')
 
