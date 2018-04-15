@@ -19,3 +19,4 @@ for i in range(len(filelist)):
     y, sr = librosa.load('train_audio/{}.wav'.format(i))
     mfcc = librosa.feature.mfcc(y, sr, n_mfcc=13)
     mfccs[i] = mfcc.T
+    print(mfccs[i])
