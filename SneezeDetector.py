@@ -74,7 +74,9 @@ if __name__ == '__main__':
             data = np.fromstring(b''.join(ring_buffer), dtype=NPFORMAT)
 
             mfcc = librosa.feature.mfcc(data, RATE, n_mfcc=13)
-            if detectHotword.get_avg_distance(mfcc.T, hotwordData) < threshold:
+            dist = detectHotword.get_avg_distance(mfcc.T, hotwordData)
+            print('D: %f ' % dist, end='')
+            if dist < threshold:
                 print('HOTWORD!')
             else:
                 print('Nothing')
