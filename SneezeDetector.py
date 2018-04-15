@@ -6,6 +6,8 @@ import numpy as np
 import pyaudio as pyaudio
 import librosa
 
+from trainHotword import get_training_mfccs
+
 DEVICE_INDEX = 0
 FORMAT = pyaudio.paFloat32
 NPFORMAT = np.float32
@@ -33,6 +35,11 @@ def get_mic_stream():
 
 
 if __name__ == '__main__':
+
+    print('Loading Samples')
+    hotwordData = get_training_mfccs()
+    print('Samples loaded')
+
 
     stream = get_mic_stream()
 
