@@ -1,13 +1,11 @@
 import numpy as np
 from fastdtw import fastdtw
-
-
-def euclidean_distance(a, b):
-    return np.sqrt(np.abs(np.sum(np.dot(a, a) - np.dot(b, b))))
+from dtw import dtw
+from scipy.spatial.distance import euclidean
 
 
 def get_distance(mfcc1, mfcc2):
-    dist, path = fastdtw(mfcc1, mfcc2, dist=euclidean_distance)
+    dist, cost, accCost, path = dtw(mfcc1, mfcc2, dist=lambda x, y: np.linalg.norm(x - y, ord=1))
     return dist
 
 
