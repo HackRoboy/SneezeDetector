@@ -45,6 +45,8 @@ if __name__ == '__main__':
 
     threshold = detectHotword.get_avg_distance_between_all(hotwordData)
 
+    print('Threshold: %f' % threshold)
+
 
     stream = get_mic_stream()
 

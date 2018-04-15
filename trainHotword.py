@@ -17,3 +17,5 @@ def get_training_mfccs():
         y, sr = librosa.load('train_audio/{}.wav'.format(i))
         mfcc = librosa.feature.mfcc(y, sr, n_mfcc=13)
         mfccs.append(mfcc.T)
+
+    return mfccs
