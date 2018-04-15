@@ -7,6 +7,7 @@ import pyaudio as pyaudio
 import librosa
 
 from trainHotword import get_training_mfccs
+import detectHotword
 
 DEVICE_INDEX = 0
 FORMAT = pyaudio.paFloat32
@@ -40,6 +41,8 @@ if __name__ == '__main__':
     hotwordData = get_training_mfccs()
     print('Samples loaded')
 
+    threshold = detectHotword.get_avg_distance_between_all(hotwordData)
+
 
     stream = get_mic_stream()
 
@@ -66,7 +69,9 @@ if __name__ == '__main__':
             # moving the full ring buffer to data (?)
             data = np.fromstring(b''.join(ring_buffer), dtype=NPFORMAT)
 
-            mfccs = librosa.feature.mfcc(data, RATE)
+            mfcc = librosa.feature.mfcc(data, RATE)
+            if detectHotword.get_avg_distance(mfcc, hotwordData) < threshold:
+                print('HOTWORD!')
 
             ring_buffer.clear()
             ring_buffer_chunknum = 0
