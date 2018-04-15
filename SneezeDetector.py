@@ -73,9 +73,11 @@ if __name__ == '__main__':
             # moving the full ring buffer to data (?)
             data = np.fromstring(b''.join(ring_buffer), dtype=NPFORMAT)
 
-            mfcc = librosa.feature.mfcc(data, RATE)
+            mfcc = librosa.feature.mfcc(data, RATE, n_mfcc=13)
             if detectHotword.get_avg_distance(mfcc.T, hotwordData) < threshold:
                 print('HOTWORD!')
+            else:
+                print('Nothing')
 
             ring_buffer.clear()
             ring_buffer_chunknum = 0
